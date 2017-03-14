@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06CD32271E783D2300FA8570 /* coco.names in Resources */ = {isa = PBXBuildFile; fileRef = 06CD32241E783D2300FA8570 /* coco.names */; };
+		06CD32281E783D2300FA8570 /* graph-tiny-yolo.pb in Resources */ = {isa = PBXBuildFile; fileRef = 06CD32251E783D2300FA8570 /* graph-tiny-yolo.pb */; };
+		06CD32291E783D2300FA8570 /* graph-yolo.pb in Resources */ = {isa = PBXBuildFile; fileRef = 06CD32261E783D2300FA8570 /* graph-yolo.pb */; };
 		591D3EC51CFF7F130059011C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591D3EC41CFF7F120059011C /* AVFoundation.framework */; };
 		591D3ECB1CFF7F5F0059011C /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591D3ECA1CFF7F5F0059011C /* CoreMedia.framework */; };
 		591D3ECD1CFF7F9F0059011C /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591D3ECC1CFF7F9F0059011C /* AssetsLibrary.framework */; };
@@ -28,6 +31,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06CD32241E783D2300FA8570 /* coco.names */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coco.names; sourceTree = "<group>"; };
+		06CD32251E783D2300FA8570 /* graph-tiny-yolo.pb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "graph-tiny-yolo.pb"; sourceTree = "<group>"; };
+		06CD32261E783D2300FA8570 /* graph-yolo.pb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "graph-yolo.pb"; sourceTree = "<group>"; };
 		591D3EC41CFF7F120059011C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		591D3EC61CFF7F370059011C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		591D3EC81CFF7F500059011C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
@@ -82,6 +88,9 @@
 				591D3ED71CFFA83A0059011C /* grace_hopper.jpg */,
 				591D3ED81CFFA83A0059011C /* imagenet_comp_graph_label_strings.txt */,
 				591D3ED91CFFA83A0059011C /* tensorflow_inception_graph.pb */,
+				06CD32241E783D2300FA8570 /* coco.names */,
+				06CD32251E783D2300FA8570 /* graph-tiny-yolo.pb */,
+				06CD32261E783D2300FA8570 /* graph-yolo.pb */,
 			);
 			path = data;
 			sourceTree = SOURCE_ROOT;
@@ -176,6 +185,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0720;
+				TargetAttributes = {
+					592FF8B418ECBD7600C164F8 = {
+						DevelopmentTeam = KG6GWND6BG;
+					};
+				};
 			};
 			buildConfigurationList = 592FF8AE18ECBD3600C164F8 /* Build configuration list for PBXProject "camera_example" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -199,8 +213,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06CD32271E783D2300FA8570 /* coco.names in Resources */,
 				591D3EDA1CFFA83A0059011C /* grace_hopper.jpg in Resources */,
+				06CD32291E783D2300FA8570 /* graph-yolo.pb in Resources */,
 				591D3EDC1CFFA83A0059011C /* tensorflow_inception_graph.pb in Resources */,
+				06CD32281E783D2300FA8570 /* graph-tiny-yolo.pb in Resources */,
 				592FF90D18EDD0DA00C164F8 /* MainStoryboard_iPhone.storyboard in Resources */,
 				591D3EDB1CFFA83A0059011C /* imagenet_comp_graph_label_strings.txt in Resources */,
 			);
@@ -269,6 +286,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = KG6GWND6BG;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -305,7 +323,7 @@
 					"-force_load",
 					"$(SRCROOT)/../../makefile/gen/lib/libtensorflow-core.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.CameraExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ofir.CameraExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -334,6 +352,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = KG6GWND6BG;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -364,7 +383,7 @@
 					"-force_load",
 					"$(SRCROOT)/../../makefile/gen/lib/libtensorflow-core.a",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.CameraExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ofir.CameraExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

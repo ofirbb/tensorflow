@@ -31,7 +31,8 @@ replace_by_sed() {
   local regex="${1}"
   shift
   if echo "${OSTYPE}" | grep -q darwin; then
-    sed -i '' -e "${regex}" "$@"
+   # installed gnused so no need for '' after -i 
+    sed -i -e "${regex}" "$@"
   else
     sed -i -e "${regex}" "$@"
   fi

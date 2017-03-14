@@ -24,7 +24,9 @@
 
 // If you have your own model, modify this to the file name, and make sure
 // you've added the file to your app resources too.
-static NSString* model_file_name = @"tensorflow_inception_graph";
+//static NSString* model_file_name = @"tensorflow_inception_graph";
+static NSString* model_file_name = @"graph-yolo";
+
 static NSString* model_file_type = @"pb";
 // This controls whether we'll be loading a plain GraphDef proto, or a
 // file created by the convert_graphdef_memmapped_format utility that wraps a
@@ -32,16 +34,20 @@ static NSString* model_file_type = @"pb";
 // reduce overall memory usage.
 const bool model_uses_memory_mapping = false;
 // If you have your own model, point this to the labels file.
-static NSString* labels_file_name = @"imagenet_comp_graph_label_strings";
-static NSString* labels_file_type = @"txt";
+//static NSString* labels_file_name = @"imagenet_comp_graph_label_strings";
+//static NSString* labels_file_type = @"txt";
+static NSString* labels_file_name = @"coco";
+static NSString* labels_file_type = @"names";
+
 // These dimensions need to match those the model was trained with.
-const int wanted_input_width = 224;
-const int wanted_input_height = 224;
+const int wanted_input_width = 416;
+const int wanted_input_height = 416;
 const int wanted_input_channels = 3;
-const float input_mean = 117.0f;
+const float input_mean = 0.0f;
 const float input_std = 1.0f;
 const std::string input_layer_name = "input";
-const std::string output_layer_name = "softmax1";
+//const std::string output_layer_name = "softmax1";
+const std::string output_layer_name = "output";
 
 static const NSString *AVCaptureStillImageIsCapturingStillImageContext =
     @"AVCaptureStillImageIsCapturingStillImageContext";
@@ -319,6 +325,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     if (!run_status.ok()) {
       LOG(ERROR) << "Running model failed:" << run_status;
     } else {
+      // TODO: check how to return tf::Tesnor without copy.
       tensorflow::Tensor *output = &outputs[0];
       auto predictions = output->flat<float>();
 
