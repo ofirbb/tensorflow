@@ -10,6 +10,7 @@
 		06CD32271E783D2300FA8570 /* coco.names in Resources */ = {isa = PBXBuildFile; fileRef = 06CD32241E783D2300FA8570 /* coco.names */; };
 		06CD32281E783D2300FA8570 /* graph-tiny-yolo.pb in Resources */ = {isa = PBXBuildFile; fileRef = 06CD32251E783D2300FA8570 /* graph-tiny-yolo.pb */; };
 		06CD32291E783D2300FA8570 /* graph-yolo.pb in Resources */ = {isa = PBXBuildFile; fileRef = 06CD32261E783D2300FA8570 /* graph-yolo.pb */; };
+		06CD32511E794BF900FA8570 /* YoloBoundingBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06CD32501E794BF900FA8570 /* YoloBoundingBox.mm */; };
 		591D3EC51CFF7F130059011C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591D3EC41CFF7F120059011C /* AVFoundation.framework */; };
 		591D3ECB1CFF7F5F0059011C /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591D3ECA1CFF7F5F0059011C /* CoreMedia.framework */; };
 		591D3ECD1CFF7F9F0059011C /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591D3ECC1CFF7F9F0059011C /* AssetsLibrary.framework */; };
@@ -34,6 +35,8 @@
 		06CD32241E783D2300FA8570 /* coco.names */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coco.names; sourceTree = "<group>"; };
 		06CD32251E783D2300FA8570 /* graph-tiny-yolo.pb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "graph-tiny-yolo.pb"; sourceTree = "<group>"; };
 		06CD32261E783D2300FA8570 /* graph-yolo.pb */ = {isa = PBXFileReference; lastKnownFileType = file; path = "graph-yolo.pb"; sourceTree = "<group>"; };
+		06CD324F1E794BF900FA8570 /* YoloBoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YoloBoundingBox.h; sourceTree = SOURCE_ROOT; };
+		06CD32501E794BF900FA8570 /* YoloBoundingBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = YoloBoundingBox.mm; sourceTree = SOURCE_ROOT; };
 		591D3EC41CFF7F120059011C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		591D3EC61CFF7F370059011C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		591D3EC81CFF7F500059011C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
@@ -145,6 +148,8 @@
 				592FF90118ECC66200C164F8 /* main.mm */,
 				591D3ED31CFF85FD0059011C /* tensorflow_utils.mm */,
 				591D3ED41CFF85FD0059011C /* tensorflow_utils.h */,
+				06CD324F1E794BF900FA8570 /* YoloBoundingBox.h */,
+				06CD32501E794BF900FA8570 /* YoloBoundingBox.mm */,
 			);
 			name = CameraExample;
 			path = SimpleExample;
@@ -232,6 +237,7 @@
 			files = (
 				592FF90218ECC66200C164F8 /* main.mm in Sources */,
 				591D3ED21CFF85C30059011C /* ios_image_load.mm in Sources */,
+				06CD32511E794BF900FA8570 /* YoloBoundingBox.mm in Sources */,
 				592FF92618EE240200C164F8 /* CameraExampleViewController.mm in Sources */,
 				592FF92518EE240200C164F8 /* CameraExampleAppDelegate.m in Sources */,
 				591D3ED51CFF85FD0059011C /* tensorflow_utils.mm in Sources */,

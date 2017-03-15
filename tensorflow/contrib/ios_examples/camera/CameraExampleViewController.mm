@@ -17,6 +17,7 @@
 #import <CoreImage/CoreImage.h>
 #import <ImageIO/ImageIO.h>
 #import "CameraExampleViewController.h"
+#import "YoloBoundingBox.h"
 
 #include <sys/time.h>
 
@@ -346,6 +347,82 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
   }
 }
 
+- (NSArray<YoloSingleOutput *> *)pruneResultsWithTensor:(tensorflow::Tensor *)tensor {
+  const YoloRawBoundingBox *outputBoxes = (const YoloRawBoundingBox *)tensor->flat<float>().data();
+  NSUInteger numberOfBoxes = 13 * 13 * 5;
+
+  NSMutableArray <YoloBoundingBox *> *sortableOutputBoxes =
+  [[NSMutableArray alloc] initWithCapacity:numberOfBoxes];
+
+  for (int i = 0; i < numberOfBoxes; i++) {
+    YoloBoundingBox *boundingBox = [[YoloBoundingBox alloc] initWithRawBoundingBox:&outputBoxes[i]];
+    [sortableOutputBoxes addObject:boundingBox];
+  }
+
+  for (NSUInteger c = 0; c < YOLO_NUMBER_OF_CLASSES; c++) {
+    // Sort the bouding boxes according to the current class' probabilities, descending (high
+    // probabilities first).
+    [sortableOutputBoxes sortUsingComparator:^NSComparisonResult(id firstObject, id secondObject) {
+      YoloBoundingBox *firstBox = (YoloBoundingBox *)firstObject;
+      YoloBoundingBox *secondBox = (YoloBoundingBox *)secondObject;
+
+      float difference = firstBox.classes[c].floatValue - secondBox.classes[c].floatValue;
+      if (difference > 0) {
+        return NSOrderedAscending;
+      }
+      else if (difference < 0) {
+        return NSOrderedDescending;
+      }
+      return NSOrderedSame;
+    }];
+
+    for (NSUInteger i = 0; i < numberOfBoxes; i++) {
+      // Threshold on boxes with zero probability.
+      if (sortableOutputBoxes[i].classes[c].floatValue < 0.00001) {
+        continue;
+      }
+
+      YoloBoundingBox *firstBox = sortableOutputBoxes[i];
+      for (NSUInteger j = i + 1; j < numberOfBoxes; j++) {
+        YoloBoundingBox *secondBox = sortableOutputBoxes[j];
+
+        // If it is the same box, zero probability of the box with the lower probability
+        // (don't show).
+        if ([firstBox IOUWithBox:secondBox] > 0.4) {
+          secondBox.classes[c] = [[NSNumber alloc] initWithFloat:0];
+        }
+      }
+    }
+  }
+
+  for (YoloBoundingBox *box in sortableOutputBoxes) {
+    // Find the max probability of each box.
+    int maxClass = 0;
+
+    for (int j = 1; j < YOLO_NUMBER_OF_CLASSES; j++) {
+      if (box.classes[j].floatValue > box.classes[maxClass].floatValue) {
+        maxClass = j;
+      }
+    }
+
+    float probability = box.classes[maxClass].floatValue;
+    // Threshold on the max class probability.
+    if (probability > 0.24) {
+      NSLog(@"%@: %.0f%% (x0=%f, y0=%f, x1=%f, y1=%f)",
+            self.classLabels[maxClass], probability * 100,
+            (box.centerX - box.width / 2) * image.size.width,
+            (box.centerY - box.height / 2) * image.size.height,
+            (box.centerX + box.width / 2) * image.size.width,
+            (box.centerY + box.height / 2) * image.size.height);
+
+      YoloSingleOutput *currentOutput =
+      [[YoloSingleOutput alloc] initWithBoundingBox:box classLabel:self.classLabels[maxClass]];
+      [results addObject:currentOutput];
+    }
+  }
+  return [results copy];
+}
+
 - (void)dealloc {
   [self teardownAVCapture];
   [square release];
@@ -536,9 +613,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                          height:labelHeight
                       alignment:kCAAlignmentLeft];
 
-    if ((labelCount == 0) && (value > 0.5f)) {
-      [self speak:[label capitalizedString]];
-    }
+//    if ((labelCount == 0) && (value > 0.5f)) {
+//      [self speak:[label capitalizedString]];
+//    }
 
     labelCount += 1;
     if (labelCount > 4) {
