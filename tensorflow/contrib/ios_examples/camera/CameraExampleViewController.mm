@@ -20,6 +20,7 @@
 #import "YoloBoundingBox.h"
 
 #include <sys/time.h>
+#include <algorithm>
 
 #include "tensorflow_utils.h"
 
@@ -325,25 +326,43 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         {{input_layer_name, image_tensor}}, {output_layer_name}, {}, &outputs);
     if (!run_status.ok()) {
       LOG(ERROR) << "Running model failed:" << run_status;
-    } else {
-      // TODO: check how to return tf::Tesnor without copy.
-      tensorflow::Tensor *output = &outputs[0];
-      auto predictions = output->flat<float>();
-
-      NSMutableDictionary *newValues = [NSMutableDictionary dictionary];
-      for (int index = 0; index < predictions.size(); index += 1) {
-        const float predictionValue = predictions(index);
-        if (predictionValue > 0.05f) {
-          std::string label = labels[index % predictions.size()];
-          NSString *labelObject = [NSString stringWithCString:label.c_str()];
-          NSNumber *valueObject = [NSNumber numberWithFloat:predictionValue];
-          [newValues setObject:valueObject forKey:labelObject];
-        }
-      }
-      dispatch_async(dispatch_get_main_queue(), ^(void) {
-        [self setPredictionValues:newValues];
-      });
+      return;
     }
+    // TODO: check how to return tf::Tesnor without copy.
+    tensorflow::Tensor *output = &outputs[0];
+//      auto predictions = output->flat<float>();
+//
+//      NSMutableDictionary *newValues = [NSMutableDictionary dictionary];
+//      for (int index = 0; index < predictions.size(); index += 1) {
+//        const float predictionValue = predictions(index);
+//        if (predictionValue > 0.05f) {
+//          std::string label = labels[index % predictions.size()];
+//          NSString *labelObject = [NSString stringWithCString:label.c_str()];
+//          NSNumber *valueObject = [NSNumber numberWithFloat:predictionValue];
+//          [newValues setObject:valueObject forKey:labelObject];
+//        }
+//      }
+
+    NSArray<YoloSingleOutput *> *boxResults = [self pruneResultsWithTensor:output];
+    NSMutableDictionary *newValues = [NSMutableDictionary dictionary];
+    for (NSUInteger index = 0; index < [boxResults count]; ++index) {
+      std::string currentLabel = std::string([[boxResults objectAtIndex:index].classLabel
+                                              cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+      ptrdiff_t pos = std::find(labels.begin(), labels.end(), currentLabel) - labels.begin();
+      if (pos >= labels.size()) {
+        LOG(ERROR) << "label of box '" << currentLabel << "' not in class list";
+        continue;
+      }
+      NSNumber *predictionValue = [[boxResults objectAtIndex:index].boundingBox.classes objectAtIndex:pos];
+      NSString *labelObject = [NSString stringWithCString:currentLabel.c_str()
+                                                 encoding:[NSString defaultCStringEncoding]];
+      NSNumber *valueObject = predictionValue;
+      [newValues setObject:valueObject forKey:labelObject];
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+      [self setPredictionValues:newValues];
+    });
   }
 }
 
@@ -395,6 +414,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     }
   }
 
+  NSMutableArray<YoloSingleOutput *> *results = [NSMutableArray array];
   for (YoloBoundingBox *box in sortableOutputBoxes) {
     // Find the max probability of each box.
     int maxClass = 0;
@@ -409,14 +429,18 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     // Threshold on the max class probability.
     if (probability > 0.24) {
       NSLog(@"%@: %.0f%% (x0=%f, y0=%f, x1=%f, y1=%f)",
-            self.classLabels[maxClass], probability * 100,
-            (box.centerX - box.width / 2) * image.size.width,
-            (box.centerY - box.height / 2) * image.size.height,
-            (box.centerX + box.width / 2) * image.size.width,
-            (box.centerY + box.height / 2) * image.size.height);
+            [NSString stringWithCString:labels[maxClass].c_str()
+                               encoding:[NSString defaultCStringEncoding]],
+            probability * 100,
+            (box.centerX - box.width / 2),
+            (box.centerY - box.height / 2),
+            (box.centerX + box.width / 2),
+            (box.centerY + box.height / 2));
 
       YoloSingleOutput *currentOutput =
-      [[YoloSingleOutput alloc] initWithBoundingBox:box classLabel:self.classLabels[maxClass]];
+          [[YoloSingleOutput alloc] initWithBoundingBox:box
+          classLabel:[NSString stringWithCString:labels[maxClass].c_str()
+                                        encoding:[NSString defaultCStringEncoding]]];
       [results addObject:currentOutput];
     }
   }
